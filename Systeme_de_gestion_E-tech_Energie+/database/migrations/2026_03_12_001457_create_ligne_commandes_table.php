@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('ligne_commandes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['admin', 'secretaire']);
-            $table->rememberToken();
+            $table->foreignId('id_doc')->constrained('documents')->onDelete('cascade');
+            $table->foreignId('id_produit')->constrained('produits');
+            $table->integer('quantite');
+            $table->decimal('prixUnitaire', 15, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('ligne_commandes');
     }
 };
