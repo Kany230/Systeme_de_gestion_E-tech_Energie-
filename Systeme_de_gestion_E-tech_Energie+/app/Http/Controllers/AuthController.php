@@ -75,7 +75,7 @@ class AuthController extends Controller
         : response()->json(['message'=> 'Impossible d\'envoyer l\'email.']);
     }
 
-    public function reinitialierPassword(Request $request){
+    public function reinitialiserPassword(Request $request){
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('configurations', function (Blueprint $table) {
             $table->id();
             $table->string('nomSociete');
-            $table->integer('ninea');
-            $table->integer('rib');
-            $table->string('phraseLegale');
+            $table->string('ninea');
+            $table->string('rib');
+            $table->text('phraseLegale');
             $table->string('logo');
             $table->timestamps();
         });

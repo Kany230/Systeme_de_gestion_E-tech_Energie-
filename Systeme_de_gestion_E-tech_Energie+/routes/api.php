@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConfigurationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,6 @@ Route::get('/reinitialise/{token}', function ($token) {
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/deconnexion', [AuthController::class, 'deconnexion']);
+    Route::get('/configuration', [ConfigurationController::class, 'show']);
+    Route::post('/configuration/update', [ConfigurationController::class, 'update']);
 });
