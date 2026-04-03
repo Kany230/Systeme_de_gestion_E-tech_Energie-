@@ -12,4 +12,8 @@ class Client extends Model
         'name',
         'telephone'
     ];
+
+    public function documents(){
+        return $this->hasMany(Document::class);
+    }
 }

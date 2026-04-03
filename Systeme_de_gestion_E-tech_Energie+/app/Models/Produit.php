@@ -20,4 +20,13 @@ class Produit extends Model
     public function verifierSeuil(){
         return $this->stock <= $this->seuilAlerte;
     }
+
+    public function diminuerStock($quantite){
+        if($this->stock >= $quantite){
+            $this->stock -= $quantite;
+            $this->save();
+        }else{
+            throw new \Exception("Stock insuffisant");
+        }
+    }
 }

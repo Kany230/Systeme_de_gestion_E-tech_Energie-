@@ -18,6 +18,7 @@ return new class extends Migration
             $table->double('prix');
             $table->integer('stock')->default(0);
             $table->integer('seuilAlerte')->default(5);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

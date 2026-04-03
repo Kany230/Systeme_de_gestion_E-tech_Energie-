@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConfigurationController;
+use App\Http\Controllers\ProduitController;
+use GuzzleHttp\Handler\Proxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,5 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/deconnexion', [AuthController::class, 'deconnexion']);
     Route::get('/configuration', [ConfigurationController::class, 'show']);
-    Route::post('/configuration/update', [ConfigurationController::class, 'update']);
+    Route::post('/configuration', [ConfigurationController::class, 'update']);
+    Route::get('/produits', [ProduitController::class, 'index']);
+    Route::post('/produits', [ProduitController::class, 'store']);
+    Route::get('/produits/{produit}', [ProduitController::class, 'show']);
+    Route::put('/produits/{produit}', [ProduitController::class, 'update']);
+    Route::delete('produits/{produit}', [ProduitController::class, 'destroy']);
+    Route::get('rupture', [ProduitController::class, 'getProduitsEnRupture']);
 });
