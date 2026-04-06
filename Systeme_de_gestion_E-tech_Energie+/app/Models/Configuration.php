@@ -6,6 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $id
+ * @property string $nomSociete
+ * @property string $ninea
+ * @property string $rib
+ * @property string $phraseLegale
+ * @property string $logo
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereLogo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereNinea($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereNomSociete($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration wherePhraseLegale($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereRib($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Configuration whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Configuration extends Model
 {
     use HasFactory;

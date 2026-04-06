@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('id_produit')->constrained('produits');
             $table->integer('quantite');
             $table->decimal('prixUnitaire', 15, 2);
+            $table->decimal('sousTotal', 15, 2);
             $table->timestamps();
         });
     }

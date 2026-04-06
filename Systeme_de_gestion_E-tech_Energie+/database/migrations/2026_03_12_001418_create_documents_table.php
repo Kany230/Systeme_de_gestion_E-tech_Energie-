@@ -19,8 +19,10 @@ return new class extends Migration
             $table->date('dateDoc');
             $table->decimal('prixTotal', 15, 2)->default(0);
             $table->decimal('taxe', 5, 2)->default(18);
-            $table->enum('statut', ['brouillon', 'en_attente', 'payer'])->default('brouillon');
-            $table->enum('format', ['facture', 'devis', 'BL']);
+            $table->enum('statut', ['brouillon', 'valide', 'payer'])->default('brouillon');
+            $table->enum('type', ['facture', 'devis', 'BL']);
+            $table->enum('format', ['A3', 'A5', 'A4'])->default('A4');
+            $table->boolean('stock_impacte')->default(false);
             $table->timestamps();
         });
     }

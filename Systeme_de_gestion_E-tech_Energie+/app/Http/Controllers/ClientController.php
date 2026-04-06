@@ -22,8 +22,10 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate([
-            'name' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20'
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'addresse' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:20'
         ]);
 
         $client = Client::create($validate);
@@ -45,6 +47,7 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $client->update($request->all());
+
         return response()->json($client);
     }
 
@@ -66,18 +69,18 @@ class ClientController extends Controller
     }
 
     public function getDocuments(Client $client){
-        $documents = $client->documents()->orderBy('date', 'desc')->get();
+        $documents = $client->documents()->orderBy('dateDoc', 'desc')->get();
         return response()->json($documents);
     }
 
     public function calculerSolde(Client $client){
         $solde = $client->documents()
         ->where('type', 'facture')
-        ->where('etat', 'impayee')
-        ->sum('montant');
+        ->where('statut', 'payer')
+        ->sum('prixTotal');
         
         return response()->json([
-            'client' => $client->name,
+            'client' => $client->nom. ' '. $client->prenom,
             'solde' => $solde
         ]);
     }
