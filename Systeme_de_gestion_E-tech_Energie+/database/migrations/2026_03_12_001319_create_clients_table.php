@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('addresse')->nullable();
             $table->integer('telephone')->nullable();
+            $table->enum('type_client', ['particulier', 'entreprise'])->default('particulier');
+            $table->string('nom_entreprise')->nullable();
+            $table->string('ninea')->nullable();
             $table->timestamps();
         });
     }

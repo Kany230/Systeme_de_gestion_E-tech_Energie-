@@ -34,7 +34,10 @@ class Client extends Model
         'nom',
         'prenom',
         'addresse',
-        'telephone'
+        'telephone',
+        'type_client',
+        'nom_entreprise',
+        'ninea'
     ];
 
     public function documents(){

@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/produits/{produit}', [ProduitController::class, 'show']);
     Route::put('/produits/{produit}', [ProduitController::class, 'update']);
     Route::delete('produits/{produit}', [ProduitController::class, 'destroy']);
+    Route::get('produits/search', [ProduitController::class, 'search']);
     Route::get('rupture', [ProduitController::class, 'getProduitsEnRupture']);
     //Clients
     Route::get('/clients', [ClientController::class, 'index']);
@@ -59,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/clients/{client}', [ClientController::class, 'show']);
     Route::get('/clients/{client}/documents', [ClientController::class, 'getDocuments']);
     Route::get('/clients/{client}/solde', [ClientController::class, 'calculerSolde']);
+    Route::get('/clients/search', [ClientController::class, 'search']);
     //Documents
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::post('/documents', [DocumentController::class, 'store']);

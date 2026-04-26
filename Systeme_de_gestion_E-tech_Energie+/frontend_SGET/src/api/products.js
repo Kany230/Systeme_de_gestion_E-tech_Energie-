@@ -41,6 +41,19 @@ export const createProduct = async (data) => {
   }
 };
 
+const handleSubmit = async (values) => {
+  const formData = new FormData();
+  formData.append('nom', values.nom);
+  formData.append('prix', values.prix);
+  formData.append('stock', values.stock);
+  formData.append('seuilAlerte', values.seuilAlerte);
+  if (values.imageFile) {
+    formData.append('image', values.imageFile);
+  }
+  
+  await createProduct(formData); // Ton service Axios gérera le reste
+};
+
 /**
  * Update existing product
  * @param {number|string} id - Product ID

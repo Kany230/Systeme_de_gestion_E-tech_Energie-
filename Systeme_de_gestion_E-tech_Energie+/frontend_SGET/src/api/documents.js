@@ -120,13 +120,20 @@ export const convertToBL = async (id) => {
  * @param {number|string} id - Document ID
  * @returns {Promise} Response with PDF blob
  */
-export const generatePDF = async (id) => {
+export const genererPDF = async (id, numeroDoc) => {
   try {
     const response = await axiosInstance.get(`/api/documents/${id}/pdf`, {
-      responseType: 'blob',
+      responseType: 'blob', // Crucial pour les fichiers
     });
-    return response.data;
+    
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Doc-${numeroDoc}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove(); // Nettoyage
   } catch (error) {
-    throw error.response?.data || { message: 'Failed to generate PDF' };
+    console.error("Erreur de téléchargement", error);
   }
 };

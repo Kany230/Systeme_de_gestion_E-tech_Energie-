@@ -22,10 +22,13 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validate = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
+            'type_client' => 'required|in:particulier,entreprise',
+            'nom' => 'required_if:type_client,particulier|string|max:255',
+            'prenom' => 'required_if:type_client,particulier|string|max:255',
+            'nom_entreprise' => 'required_if:type_client,entreprise|string|max:255',
             'addresse' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:20'
+            'telephone' => 'nullable|string|max:20',
+            'ninea' => 'nullable|string|max:100'
         ]);
 
         $client = Client::create($validate);
@@ -80,8 +83,20 @@ class ClientController extends Controller
         ->sum('prixTotal');
         
         return response()->json([
-            'client' => $client->nom. ' '. $client->prenom,
+            'client' => $client->type_client === 'particulier' 
+                    ? "$client->nom $client->prenom" 
+                    : $client->nom_entreprise,
             'solde' => $solde
         ]);
+    }
+
+    public function search(Request $request){
+        $query = $request->get('q');
+        $clients = Client::where('nom', 'LIKE', "%{$query}%")
+                          ->orWhere('prenom', 'LIKE', "%{$query}%")
+                          ->orWhere('nom_entreprise', 'LIKE', "%{$query}%")
+                          ->get();
+
+        return response()->json($clients);
     }
 }

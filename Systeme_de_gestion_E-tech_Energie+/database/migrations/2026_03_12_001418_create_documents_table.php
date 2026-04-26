@@ -16,8 +16,11 @@ return new class extends Migration
             $table->foreignId('id_client')->constrained('clients');
             $table->foreignId('id_user')->constrained('users');
             $table->string('numeroDoc')->unique();
+            $table->string('titre');
+            $table->string('total_lettres');
             $table->date('dateDoc');
             $table->decimal('prixTotal', 15, 2)->default(0);
+            $table->decimal('main_doeuvre', 15, 2)->default(0);
             $table->decimal('taxe', 5, 2)->default(18);
             $table->enum('statut', ['brouillon', 'valide', 'payer'])->default('brouillon');
             $table->enum('type', ['facture', 'devis', 'BL']);

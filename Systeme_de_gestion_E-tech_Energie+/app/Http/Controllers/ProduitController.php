@@ -41,7 +41,7 @@ class ProduitController extends Controller
             'prix' => 'required|numeric',
             'stock' => 'required|integer',
             'seuilAlerte' => 'required|integer',
-            'image' => 'nullable|string'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if(request()->hasFile('image')){
@@ -83,16 +83,25 @@ class ProduitController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Produit $produit)
-    {
-        $produit->update($request->all());
-        if (request()->hasFile('image')){
-            if($produit->image) Storage::disk(('public'))->delete($produit->image);
-            $imagePath = request()->file('image')->store('produits', 'public');
-            $produit->update(['image' => $imagePath]);
-        }
+{
+    $validate = $request->validate([
+        'nom' => 'sometimes|string|max:255',
+        'prix' => 'sometimes|numeric',
+        'stock' => 'sometimes|integer',
+        'seuilAlerte' => 'sometimes|integer',
+        'image' => 'nullable|image|max:2048'
+    ]);
 
-        return response()->json($produit);
+    $produit->fill($request->except('image'));
+
+    if ($request->hasFile('image')) {
+        if ($produit->image) Storage::disk('public')->delete($produit->image);
+        $produit->image = $request->file('image')->store('produits', 'public');
     }
+
+    $produit->save();
+    return response()->json($produit);
+}
 
     /**
      * Remove the specified resource from storage.
@@ -105,4 +114,13 @@ class ProduitController extends Controller
             'message' => 'Produit supprime'
         ]);
     }
+
+    public function search(Request $request)
+{
+    $q = $request->query('q');
+    $produits = Produit::where('nom', 'LIKE', "%{$q}%")
+                        ->orWhere('description', 'LIKE', "%{$q}%")
+                        ->get();
+    return response()->json($produits);
+}
 }

@@ -28,7 +28,7 @@ export const login = async (email, password) => {
  */
 export const register = async (name, email, password, role) => {
   try {
-    const response = await axiosInstance.post('/api/register', {
+    const response = await axiosInstance.post('/api/inscription', {
       name,
       email,
       password,
@@ -46,7 +46,7 @@ export const register = async (name, email, password, role) => {
  */
 export const logout = async () => {
   try {
-    const response = await axiosInstance.post('/api/logout');
+    const response = await axiosInstance.post('/api/deconnexion');
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Logout failed' };
@@ -60,7 +60,7 @@ export const logout = async () => {
  */
 export const forgotPassword = async (email) => {
   try {
-    const response = await axiosInstance.post('/api/forgot-password', {
+    const response = await axiosInstance.post('/api/oublierpwd', {
       email,
     });
     return response.data;

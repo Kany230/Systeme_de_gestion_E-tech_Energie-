@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nomSociete');
             $table->string('ninea');
-            $table->string('rib');
+            $table->string('email')->unique();
+            $table->string('contact');
             $table->text('phraseLegale');
             $table->string('logo');
             $table->timestamps();

@@ -20,17 +20,31 @@ class ConfigurationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request)
-    {
-        $configuration = Configuration::first();
+{
+    // 1. On récupère ou on crée la première ligne de config
+    $configuration = Configuration::firstOrCreate([], [
+        'nom_entreprise' => 'Ma Société',
+    ]);
 
-        $configuration->update($request->all());
+    // 2. Validation des données
+    $request->validate([
+        'nom_entreprise' => 'sometimes|string|max:255',
+        'email' => 'sometimes|email',
+        'telephone' => 'sometimes|string',
+        'ninea' => 'sometimes|string',
+        'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        if($request->hasFile('logo')){
-            $configuration->updateLogo($request->file('logo'));
-        }
+    // 3. Mise à jour des textes
+    $configuration->update($request->except('logo'));
 
-        return response()->json($configuration);
+    // 4. Gestion du logo (en supposant que ta méthode updateLogo() gère la suppression de l'ancien)
+    if($request->hasFile('logo')){
+        $configuration->updateLogo($request->file('logo'));
     }
+
+    return response()->json($configuration->fresh());
+}
 
     /**
      * Remove the specified resource from storage.
