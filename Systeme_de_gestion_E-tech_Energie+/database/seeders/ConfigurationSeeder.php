@@ -19,8 +19,8 @@ class ConfigurationSeeder extends Seeder
             'ninea' => '012090841 - SN THS 2025 A 1705',
             'email' => 'etechenergieplus@gmail.com',
             'contact' => '+221 78 805 16 17 / +221 77 114 51 52 / +221 77 046 70 04',
-            'phraseLegale' => 'sdfghjlkjs fkleyuih gyfguyiuhiuhiyf',
-            'logo' => 'app\Amaana.jpg'
+            'phraseLegale' => "L'innovation à portée de main",
+            'logo' => 'public/images/logo.jpeg'
         ]);
     }
 }

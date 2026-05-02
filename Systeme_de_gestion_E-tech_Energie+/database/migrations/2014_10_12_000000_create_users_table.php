@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'secretaire']);
+            $table->boolean('is_validated')->default(false);
+            $table->enum('statut', ['active', 'blocked', 'en_attente', 'debloque'])->default('blocked');
             $table->rememberToken();
             $table->timestamps();
         });

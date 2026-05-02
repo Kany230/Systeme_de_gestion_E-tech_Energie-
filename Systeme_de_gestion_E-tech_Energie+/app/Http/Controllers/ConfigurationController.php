@@ -23,7 +23,7 @@ class ConfigurationController extends Controller
 {
     // 1. On récupère ou on crée la première ligne de config
     $configuration = Configuration::firstOrCreate([], [
-        'nom_entreprise' => 'Ma Société',
+        'nom_entreprise' => 'e-Tech Energie+'
     ]);
 
     // 2. Validation des données
