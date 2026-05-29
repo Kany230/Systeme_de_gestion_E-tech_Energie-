@@ -6,6 +6,9 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LigneCommandeController;
 use App\Http\Controllers\ProduitController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\MouvementStockController;
 use App\Models\Client;
 use App\Models\LigneCommande;
 use GuzzleHttp\Handler\Proxy;
@@ -25,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/inscription', [AuthController::class, 'inscription']);
 Route::post('/connexion', [AuthController::class, 'connexion']);
 Route::post('/oublierpwd', [AuthController::class, 'passwordOublier']);
-Route::post('/reinitialise/{token}', [AuthController::class, 'reinitialierPassword']);
+Route::post('/reinitialise/{token}', [AuthController::class, 'reinitialiserPassword']);
 // Cette route ne fait rien techniquement, elle sert juste de "nom" pour l'email
 Route::get('/reinitialise/{token}', function ($token) {
     return response()->json(['token' => $token]);
@@ -40,18 +43,31 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
     //Clients
     Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
+    //Dashboard
+    Route::get('/dashboard/statistics',        [DashboardController::class, 'statistics']);
+    Route::get('/dashboard/commandes',    [DashboardController::class, 'derniersCommandes']);
+    Route::get('/dashboard/stock-faible', [DashboardController::class, 'stockFaible']);
+    //Produits
+    Route::post('/produits', [ProduitController::class, 'store']);
+    Route::delete('produits/{produit}', [ProduitController::class, 'destroy']);
+    //Catégories
+    Route::get('/categories', [CategorieController::class, 'index']);
+    Route::post('/categories', [CategorieController::class, 'store']);
+    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
+    //Mouvements de stock
+    Route::get('/mouvements-stock', [MouvementStockController::class, 'index']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/deconnexion', [AuthController::class, 'deconnexion']);
+    Route::get('/me', [AuthController::class, 'me']);
    
     //Produits
     Route::get('/produits', [ProduitController::class, 'index']);
-    Route::post('/produits', [ProduitController::class, 'store']);
     Route::get('/produits/{produit}', [ProduitController::class, 'show']);
     Route::put('/produits/{produit}', [ProduitController::class, 'update']);
-    Route::delete('produits/{produit}', [ProduitController::class, 'destroy']);
-    Route::get('rupture', [ProduitController::class, 'getProduitsEnRupture']);
+    Route::get('/produits/rupture', [ProduitController::class, 'getProduitsEnRupture']);
+    Route::put('/produits/{produit}/stock', [ProduitController::class, 'modifierStock']);
     //Clients
     Route::get('/clients', [ClientController::class, 'index']);
     Route::post('/clients', [ClientController::class, 'store']);

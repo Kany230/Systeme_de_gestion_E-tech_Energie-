@@ -32,7 +32,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'message' => 'inscription reuissie'
-        ], 210);
+        ], 201);
     }
 
     public function connexion(Request $request){
@@ -105,5 +105,9 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'deconnexion reuissie'
         ]);
+    }
+
+    public function me(Request $request){
+        return response()->json($request->user());
     }
 }

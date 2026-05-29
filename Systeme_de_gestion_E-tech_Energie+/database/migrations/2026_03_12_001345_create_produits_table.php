@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->integer('seuilAlerte')->default(5);
             $table->string('image')->nullable();
+            $table->foreignId('categorie_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }

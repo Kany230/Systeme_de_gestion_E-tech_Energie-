@@ -9,6 +9,7 @@ use App\Models\Produit;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\MouvementStock;
 
 class DocumentController extends Controller
 {
@@ -143,8 +144,17 @@ class DocumentController extends Controller
                     }
 
                     $produit->diminuerStock($ligne->quantite);
+
+                    MouvementStock::create([
+                    'id_produit' => $document->ligneDocument[0]->id_produit,
+                    'quantite' => $document->ligneDocument[0]->quantite,
+                    'type' => 'sortie',
+                    'id_user' => auth()->id(),
+                    'id_document' => $document->id
+                ]);
                 }
                 $document->stock_impacte = true;
+
             }
             $document->update(['statut' => 'valide']);
             return response()->json([

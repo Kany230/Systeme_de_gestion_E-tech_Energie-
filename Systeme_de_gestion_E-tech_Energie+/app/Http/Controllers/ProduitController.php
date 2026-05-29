@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\MouvementStock;
 
 class ProduitController extends Controller
 {
@@ -13,7 +14,7 @@ class ProduitController extends Controller
      */
     public function index()
     {
-        $produits = Produit::all();
+        $produits = Produit::with('categorie')->get();
         return response()->json($produits);
     }
 
@@ -22,13 +23,7 @@ class ProduitController extends Controller
         return response()->json($produits);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -41,7 +36,8 @@ class ProduitController extends Controller
             'prix' => 'required|numeric',
             'stock' => 'required|integer',
             'seuilAlerte' => 'required|integer',
-            'image' => 'nullable|string'
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         if(request()->hasFile('image')){
@@ -50,6 +46,18 @@ class ProduitController extends Controller
         }
 
         $produit = Produit::create($validate);
+
+        if ($produit->stock > 0) {
+            MouvementStock::create([
+                'produit_id' => $produit->id,
+                'user_id'    => auth()->id(),
+                'type'       => 'entree',
+                'quantite'   => $produit->stock,
+                'motif'      => 'Stock initial à la création du produit'
+         ]);
+
+        }
+
         return response()->json($produit, 201);
     }
 
@@ -68,12 +76,34 @@ class ProduitController extends Controller
     {
         $request->validate(['quantite' => 'required|integer']);
         try {
-            $produit->diminuerStock($request->quantite);
+            $quantite = $request->quantite;
+            if ($quantite < 0){
+                $produit->diminuerStock($quantite);
+                $typeMouvement = 'sortie';
+                $quantiteMouvement = $quantite;
+                $motif = 'Ajustement de stock - diminution';
+            }else{
+                $produit->stock += $quantite;
+                $produit->save();
+                $typeMouvement = 'entrée';
+                $quantiteMouvement = $quantite;
+                $motif = 'Ajustement de stock - augmentation';
+            }
+
+            MouvementStock::create([
+                'id_produit' => $produit->id,
+                'quantite' => $quantiteMouvement,
+                'type' => $typeMouvement,
+                'id_user' => auth()->id(),
+                'motif' => $motif
+            ]);
+
             return response()->json([
                 'message' => 'Stock mis à jour',
                 'new stock' => $produit->stock,
                 'alerte' => $produit->verifierSeuil()
             ]);
+
         }catch(\Exception $e){
             return response()->json($e->getMessage(), 400);
         }
@@ -84,12 +114,22 @@ class ProduitController extends Controller
      */
     public function update(Request $request, Produit $produit)
     {
-        $produit->update($request->all());
+        $validated = $request->validate([
+            'nom' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|nullable|string',
+            'prix' => 'sometimes|required|numeric',
+            'stock' => 'sometimes|required|integer',
+            'seuilAlerte' => 'sometimes|required|integer',
+            'categorie_id' => 'sometimes|required|exists:categories,id',
+            'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
         if (request()->hasFile('image')){
             if($produit->image) Storage::disk(('public'))->delete($produit->image);
             $imagePath = request()->file('image')->store('produits', 'public');
             $produit->update(['image' => $imagePath]);
         }
+
+        $produit->update($validated);
 
         return response()->json($produit);
     }

@@ -38,7 +38,9 @@ class Produit extends Model
         'description',
         'prix',
         'stock',
-        'seuilAlerte'
+        'seuilAlerte', 
+        'image',
+        'categorie_id'
     ];
 
     public function verifierSeuil(){
@@ -52,5 +54,14 @@ class Produit extends Model
         }else{
             throw new \Exception("Stock insuffisant");
         }
+    }
+
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class, 'id_categorie');
+    }
+
+    public function mouvementsStock() {
+        return $this->hasMany(MouvementStock::class, 'produit_id');
     }
 }
