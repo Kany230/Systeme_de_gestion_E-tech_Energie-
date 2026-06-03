@@ -15,11 +15,12 @@ class ConfigurationSeeder extends Seeder
     {
         Configuration::create([
             'id'=> 1,
-            'nomSociete' => 'test',
-            'ninea' => 'qn-rdt-135',
-            'rib' => 'fuiuhh 13578 hguhj ouyfty',
-            'phraseLegale' => 'sdfghjlkjs fkleyuih gyfguyiuhiuhiyf',
-            'logo' => 'app\Amaana.jpg'
+            'nomSociete' => 'e-Tech Energie+',
+            'ninea' => '012090841 - SN THS 2025 A 1705',
+            'email' => 'etechenergieplus@gmail.com',
+            'contact' => '+221 78 805 16 17 / +221 77 114 51 52 / +221 77 046 70 04',
+            'phraseLegale' => "L'innovation à portée de main",
+            'logo' => 'public/images/logo.jpeg'
         ]);
     }
 }

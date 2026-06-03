@@ -1,89 +1,99 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ConfigurationController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\LigneCommandeController;
-use App\Http\Controllers\ProduitController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\CategorieController;
-use App\Http\Controllers\MouvementStockController;
-use App\Models\Client;
-use App\Models\LigneCommande;
-use GuzzleHttp\Handler\Proxy;
-use Illuminate\Http\Request;
+use App\Http\Controllers\{
+    AuthController,
+    ClientController,
+    ConfigurationController,
+    DocumentController,
+    LigneCommandeController,
+    ProduitController,
+    DashboardController,
+    CategorieController,
+    MouvementStockController
+};
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// --- Routes Publiques ---
 Route::post('/inscription', [AuthController::class, 'inscription']);
 Route::post('/connexion', [AuthController::class, 'connexion']);
 Route::post('/oublierpwd', [AuthController::class, 'passwordOublier']);
 Route::post('/reinitialise/{token}', [AuthController::class, 'reinitialiserPassword']);
-// Cette route ne fait rien techniquement, elle sert juste de "nom" pour l'email
-Route::get('/reinitialise/{token}', function ($token) {
-    return response()->json(['token' => $token]);
-})->name('password.reset');
 
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    //Configuration
-    Route::get('/configuration', [ConfigurationController::class, 'show']);
-    Route::post('/configuration', [ConfigurationController::class, 'update']);
-    //documents
-    Route::put('/documents/{document}', [DocumentController::class, 'update']);
-    Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
-    //Clients
-    Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
-    //Dashboard
-    Route::get('/dashboard/statistics',        [DashboardController::class, 'statistics']);
-    Route::get('/dashboard/commandes',    [DashboardController::class, 'derniersCommandes']);
-    Route::get('/dashboard/stock-faible', [DashboardController::class, 'stockFaible']);
-    //Produits
-    Route::post('/produits', [ProduitController::class, 'store']);
-    Route::delete('produits/{produit}', [ProduitController::class, 'destroy']);
-    //Catégories
-    Route::get('/categories', [CategorieController::class, 'index']);
-    Route::post('/categories', [CategorieController::class, 'store']);
-    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
-    //Mouvements de stock
-    Route::get('/mouvements-stock', [MouvementStockController::class, 'index']);
-});
+// --- Routes Protégées (Tous utilisateurs connectés) ---
 Route::middleware('auth:sanctum')->group(function () {
-    
+    // Session & Profil
     Route::post('/deconnexion', [AuthController::class, 'deconnexion']);
     Route::get('/me', [AuthController::class, 'me']);
-   
-    //Produits
+    Route::put('/user/profile', [AuthController::class, 'modifierProfil']);
+
+    // Produits — route statique AVANT la route dynamique {produit}
+    Route::get('/produits/rupture', [ProduitController::class, 'getProduitsEnRupture']);
     Route::get('/produits', [ProduitController::class, 'index']);
     Route::get('/produits/{produit}', [ProduitController::class, 'show']);
-    Route::put('/produits/{produit}', [ProduitController::class, 'update']);
-    Route::get('/produits/rupture', [ProduitController::class, 'getProduitsEnRupture']);
-    Route::put('/produits/{produit}/stock', [ProduitController::class, 'modifierStock']);
-    //Clients
+
+    // Catégories & Stock
+    Route::get('/categories', [CategorieController::class, 'index']);
+    Route::get('/mouvements-stock', [MouvementStockController::class, 'index']);
+
+    // Clients
     Route::get('/clients', [ClientController::class, 'index']);
-    Route::post('/clients', [ClientController::class, 'store']);
-    Route::put('/clients/{client}', [ClientController::class, 'update']);
     Route::get('/clients/{client}', [ClientController::class, 'show']);
     Route::get('/clients/{client}/documents', [ClientController::class, 'getDocuments']);
     Route::get('/clients/{client}/solde', [ClientController::class, 'calculerSolde']);
-    //Documents
+
+    // Documents
     Route::get('/documents', [DocumentController::class, 'index']);
-    Route::post('/documents', [DocumentController::class, 'store']);
     Route::get('/documents/{document}', [DocumentController::class, 'show']);
+    Route::get('/documents/{document}/pdf', [DocumentController::class, 'genererPDF']);
+
+    // Dashboard — accessibles à tous les utilisateurs connectés
+    Route::get('/dashboard/statistics', [DashboardController::class, 'statistics']);
+    Route::get('/dashboard/commandes', [DashboardController::class, 'derniersCommandes']);
+    Route::get('/dashboard/stock-faible', [DashboardController::class, 'stockFaible']);
+});
+
+// --- Routes Réservées à l'Administrateur ---
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Gestion des utilisateurs
+    Route::get('/users', [AuthController::class, 'listUsers']);
+    Route::put('/users/{id}/valider', [AuthController::class, 'validerCompte']);
+    Route::put('/users/{id}/bloquer', [AuthController::class, 'bloquerCompte']);
+    Route::put('/users/{id}/debloquer', [AuthController::class, 'debloquerCompte']);
+    Route::delete('/users/{id}', [AuthController::class, 'deleteUser']);
+
+    // Configuration
+    Route::get('/configuration', [ConfigurationController::class, 'show']);
+    Route::put('/configuration', [ConfigurationController::class, 'update']);
+
+    // Produits (écriture)
+    Route::post('/produits', [ProduitController::class, 'store']);
+    Route::put('/produits/{produit}', [ProduitController::class, 'update']);
+    Route::put('/produits/{produit}/stock', [ProduitController::class, 'modifierStock']);
+    Route::delete('/produits/{produit}', [ProduitController::class, 'destroy']);
+
+    // Catégories (écriture)
+    Route::post('/categories', [CategorieController::class, 'store']);
+    Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
+
+    // Clients (écriture)
+    Route::post('/clients', [ClientController::class, 'store']);
+    Route::put('/clients/{client}', [ClientController::class, 'update']);
+    Route::delete('/clients/{client}', [ClientController::class, 'destroy']);
+
+    // Documents (écriture & workflow)
+    Route::post('/documents', [DocumentController::class, 'store']);
+    Route::put('/documents/{document}', [DocumentController::class, 'update']);
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
     Route::post('/documents/{document}/valider', [DocumentController::class, 'valider']);
     Route::post('/documents/{devis}/convertir-en-facture', [DocumentController::class, 'convertirEnFacture']);
     Route::post('/documents/{facture}/convertir-en-bl', [DocumentController::class, 'convertirEnBL']);
-    Route::get('/documents/{document}/pdf', [DocumentController::class, 'genererPDF']);
-    //Ligne Commande
+
+    // Lignes de commande
     Route::put('/ligne-commandes/{ligneCommande}', [LigneCommandeController::class, 'update']);
     Route::delete('/ligne-commandes/{ligneCommande}', [LigneCommandeController::class, 'destroy']);
+
+    // Rapports — noms alignés avec les pages frontend
+    Route::get('/dashboard/rapports/events', [DashboardController::class, 'rapportEvents']);
+    Route::get('/dashboard/rapports/action', [DashboardController::class, 'rapportAction']);
+    Route::get('/dashboard/rapports/clients', [DashboardController::class, 'rapportClients']);
 });

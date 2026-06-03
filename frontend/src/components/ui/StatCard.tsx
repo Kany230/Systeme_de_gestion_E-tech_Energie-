@@ -1,4 +1,4 @@
-import { ReactNode, ElementType } from 'react'
+import type { ElementType } from 'react'
 
 interface StatCardProps {
   title: string

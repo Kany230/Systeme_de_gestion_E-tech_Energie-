@@ -1,5 +1,5 @@
 import api from './api'
-import type { Client } from '../types'
+import type { Client, MouvementStock } from '../types'
 
 export const clientService = {
   async getAll(): Promise<Client[]> {
@@ -25,4 +25,14 @@ export const clientService = {
   async delete(id: number): Promise<void> {
     await api.delete(`/clients/${id}`)
   },
+
+  async getDocuments(id: number): Promise<Document[]> {
+    const response = await api.get<Document[]>(`/clients/${id}/documents`)
+    return response.data
+  },
+
+  async getSolde(id: number): Promise<{ client: string, solde: number }> {
+    const response = await api.get<{ client: string, solde: number }>(`/clients/${id}/solde`)
+    return response.data
+  }
 }

@@ -12,8 +12,12 @@ export const produitService = {
     return response.data
   },
 
-  async create(data: Omit<Produit, 'id'>): Promise<Produit> {
-    const response = await api.post<Produit>('/produits', data)
+  async create(data: FormData): Promise<Produit> {
+    const response = await api.post<Produit>('/produits', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+    })
     return response.data
   },
 
@@ -24,5 +28,15 @@ export const produitService = {
 
   async delete(id: number): Promise<void> {
     await api.delete(`/produits/${id}`)
+  },
+
+  async getRupture(): Promise<Produit[]> {
+    const response = await api.get<Produit[]>('/produits/rupture');
+    return response.data
+  },
+
+  async modifierStock(id: number, quantite: number): Promise<{ message: string; 'new stock': number; alerte: boolean }> {
+    const response = await api.put(`/produits/${id}/stock`, { quantite })
+    return response.data
   },
 }

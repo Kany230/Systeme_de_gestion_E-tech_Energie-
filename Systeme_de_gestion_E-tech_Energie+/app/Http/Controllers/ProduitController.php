@@ -36,7 +36,7 @@ class ProduitController extends Controller
             'prix' => 'required|numeric',
             'stock' => 'required|integer',
             'seuilAlerte' => 'required|integer',
-            'categorie_id' => 'required|exists:categories,id',
+            'id_categorie' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -120,7 +120,7 @@ class ProduitController extends Controller
             'prix' => 'sometimes|required|numeric',
             'stock' => 'sometimes|required|integer',
             'seuilAlerte' => 'sometimes|required|integer',
-            'categorie_id' => 'sometimes|required|exists:categories,id',
+            'id_categorie' => 'sometimes|required|exists:categories,id',
             'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         if (request()->hasFile('image')){

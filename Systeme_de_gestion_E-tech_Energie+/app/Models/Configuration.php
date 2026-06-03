@@ -35,7 +35,8 @@ class Configuration extends Model
     protected $fillable = [
         'nomSociete',
         'ninea',
-        'rib',
+        'email',
+        'contact',
         'phraseLegale',
         'logo'
     ];

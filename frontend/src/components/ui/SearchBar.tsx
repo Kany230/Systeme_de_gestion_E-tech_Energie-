@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react'
+import { type InputHTMLAttributes } from 'react'
 import { Search } from 'lucide-react'
 
 interface SearchBarProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {

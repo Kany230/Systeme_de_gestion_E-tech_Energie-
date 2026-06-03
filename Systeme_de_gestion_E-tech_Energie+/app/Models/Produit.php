@@ -40,7 +40,7 @@ class Produit extends Model
         'stock',
         'seuilAlerte', 
         'image',
-        'categorie_id'
+        'id_categorie'
     ];
 
     public function verifierSeuil(){

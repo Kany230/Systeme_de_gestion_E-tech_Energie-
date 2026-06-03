@@ -1,11 +1,23 @@
 import { Link } from 'react-router-dom'
 import { Search, Bell, Menu } from 'lucide-react'
+import type { UserProfil } from '../../services/auth.service'
 
 interface NavbarProps {
+  user: UserProfil | null //Ajout de la prop user pour afficher les informations de l'utilisateur connecte
   onMenuClick: () => void
 }
 
-export default function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ user, onMenuClick }: NavbarProps) {
+
+  //Recuperation de la premiere lettre du nom de l'utilisateur pour l'afficher dans l'avatar
+  const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U'
+
+  //Formatage du role de l'utilisateur
+  const role = (role?: string) => {
+    if (!user?.role) return 'Utilisateur'
+    return user.role.charAt(0).toUpperCase() + user.role.slice(1)
+  }
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="flex items-center justify-between h-16 px-4 lg:px-6">
@@ -23,7 +35,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               <span className="text-white font-bold text-sm">E</span>
             </div>
             <span className="text-xl font-bold text-gray-800 hidden sm:block">
-              E-tech Énergie
+              E-tech Energie
             </span>
           </Link>
         </div>
@@ -51,11 +63,11 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           {/* User menu */}
           <div className="hidden sm:flex items-center space-x-3 pl-3 border-l">
             <div className="text-right">
-              <div className="text-sm font-medium text-gray-800">Admin</div>
-              <div className="text-xs text-gray-500">Administrateur</div>
+              <div className="text-sm font-medium text-gray-800">{user ? user.name : 'Chargement...'}</div>
+              <div className="text-xs text-gray-500">{role(user?.role)}</div>
             </div>
             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-              A
+              {initial}
             </div>
           </div>
         </div>

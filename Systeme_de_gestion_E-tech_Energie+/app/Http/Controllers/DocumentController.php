@@ -146,8 +146,8 @@ class DocumentController extends Controller
                     $produit->diminuerStock($ligne->quantite);
 
                     MouvementStock::create([
-                    'id_produit' => $document->ligneDocument[0]->id_produit,
-                    'quantite' => $document->ligneDocument[0]->quantite,
+                    'id_produit' => $ligne->id_produit,
+                    'quantite' => $ligne->quantite,
                     'type' => 'sortie',
                     'id_user' => auth()->id(),
                     'id_document' => $document->id
